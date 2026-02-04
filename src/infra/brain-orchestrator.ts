@@ -90,7 +90,20 @@ export class BrainInfrastructureOrchestrator {
       this.registerVerificationSystem(),
     ];
 
-    await Promise.all(componentRegistrations);
+    // Initialize components with timeout to prevent hanging
+    try {
+      await Promise.race([
+        Promise.all(componentRegistrations),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Brain component initialization timeout")), 10000),
+        ),
+      ]);
+    } catch (error) {
+      console.warn(
+        `[Brain Orchestrator] Component initialization timed out or failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+      console.warn("[Brain Orchestrator] Continuing with partial initialization");
+    }
 
     this.state.totalComponents = this.components.size;
     this.updateSystemHealth();
@@ -114,14 +127,19 @@ export class BrainInfrastructureOrchestrator {
       },
       healthCheck: async () => {
         try {
-          // Test brain security analysis
-          const testResult = await this.brainClient.invokeTool(
-            "security",
-            "security",
-            "analyze_hostname_risk",
-            { hostname: "test.example.com", context: "health_check" },
-            "low",
-          );
+          // Test brain security analysis with timeout
+          const testResult = await Promise.race([
+            this.brainClient.invokeTool(
+              "security",
+              "security",
+              "analyze_hostname_risk",
+              { hostname: "test.example.com", context: "health_check" },
+              "low",
+            ),
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error("SSRF health check timeout")), 5000),
+            ),
+          ]);
 
           return {
             status: testResult.success ? "healthy" : "degraded",
@@ -163,13 +181,18 @@ export class BrainInfrastructureOrchestrator {
       },
       healthCheck: async () => {
         try {
-          const testResult = await this.brainClient.invokeTool(
-            "security",
-            "security",
-            "analyze_tls_fingerprint",
-            { fingerprint: "test_fingerprint", context: "health_check" },
-            "low",
-          );
+          const testResult = await Promise.race([
+            this.brainClient.invokeTool(
+              "security",
+              "security",
+              "analyze_tls_fingerprint",
+              { fingerprint: "test_fingerprint", context: "health_check" },
+              "low",
+            ),
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error("TLS health check timeout")), 5000),
+            ),
+          ]);
 
           return {
             status: testResult.success ? "healthy" : "degraded",
@@ -211,13 +234,18 @@ export class BrainInfrastructureOrchestrator {
       },
       healthCheck: async () => {
         try {
-          const testResult = await this.brainClient.invokeTool(
-            "communication",
-            "communication",
-            "optimize_message_delivery",
-            { message: "test", recipient: "test", context: "health_check" },
-            "low",
-          );
+          const testResult = await Promise.race([
+            this.brainClient.invokeTool(
+              "communication",
+              "communication",
+              "optimize_message_delivery",
+              { message: "test", recipient: "test", context: "health_check" },
+              "low",
+            ),
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error("Outbound health check timeout")), 5000),
+            ),
+          ]);
 
           return {
             status: testResult.success ? "healthy" : "degraded",
@@ -259,13 +287,18 @@ export class BrainInfrastructureOrchestrator {
       },
       healthCheck: async () => {
         try {
-          const testResult = await this.brainClient.invokeTool(
-            "agents",
-            "communication",
-            "coordinate_agents",
-            { agents: ["test"], task: "health_check" },
-            "low",
-          );
+          const testResult = await Promise.race([
+            this.brainClient.invokeTool(
+              "agents",
+              "communication",
+              "coordinate_agents",
+              { agents: ["test"], task: "health_check" },
+              "low",
+            ),
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error("Agent health check timeout")), 5000),
+            ),
+          ]);
 
           return {
             status: testResult.success ? "healthy" : "degraded",
@@ -307,13 +340,18 @@ export class BrainInfrastructureOrchestrator {
       },
       healthCheck: async () => {
         try {
-          const testResult = await this.brainClient.invokeTool(
-            "hal",
-            "infrastructure",
-            "coordinate_systems",
-            { systems: ["test"], context: "health_check" },
-            "medium",
-          );
+          const testResult = await Promise.race([
+            this.brainClient.invokeTool(
+              "hal",
+              "infrastructure",
+              "coordinate_systems",
+              { systems: ["test"], context: "health_check" },
+              "medium",
+            ),
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error("HAL health check timeout")), 5000),
+            ),
+          ]);
 
           return {
             status: testResult.success ? "healthy" : "degraded",
@@ -352,13 +390,18 @@ export class BrainInfrastructureOrchestrator {
       },
       healthCheck: async () => {
         try {
-          const testResult = await this.brainClient.invokeTool(
-            "verification",
-            "infrastructure",
-            "validate_system_integrity",
-            { components: Array.from(this.components.keys()), context: "health_check" },
-            "medium",
-          );
+          const testResult = await Promise.race([
+            this.brainClient.invokeTool(
+              "verification",
+              "infrastructure",
+              "validate_system_integrity",
+              { components: Array.from(this.components.keys()), context: "health_check" },
+              "medium",
+            ),
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error("Verification health check timeout")), 5000),
+            ),
+          ]);
 
           return {
             status: testResult.success ? "healthy" : "degraded",
@@ -389,7 +432,18 @@ export class BrainInfrastructureOrchestrator {
 
   private startHealthMonitoring(): void {
     this.healthCheckInterval = setInterval(async () => {
-      await this.performSystemHealthCheck();
+      try {
+        await Promise.race([
+          this.performSystemHealthCheck(),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("Health check timeout")), 15000),
+          ),
+        ]);
+      } catch (error) {
+        console.warn(
+          `[Brain Orchestrator] Health check failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+        );
+      }
     }, 30000); // Check every 30 seconds
   }
 
