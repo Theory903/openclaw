@@ -1,3 +1,4 @@
+import { getIPPOCAdapter } from "../../../../../../cortex/cortex/openclaw-cortex/src/ippoc-adapter.js";
 import { CapabilityTokenManager, CapabilityScope } from "./capability-tokens.js";
 
 export class WASMGate {
@@ -19,7 +20,7 @@ export class WASMGate {
     }
 
     // Execute WASM in isolated context
-    const module = await WebAssembly.compile(wasmCode);
+    const module = await WebAssembly.compile(wasmCode as any);
     const instance = await WebAssembly.instantiate(module, this.createSandbox());
 
     return instance.exports;

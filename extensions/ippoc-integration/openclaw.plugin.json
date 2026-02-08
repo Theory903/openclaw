@@ -2,15 +2,27 @@
   "id": "ippoc-integration",
   "name": "IPPOC Organism Layer",
   "description": "Integrates IPPOC memory, learning, economy, and swarm intelligence.",
+  "entry": "index.ts",
   "configSchema": {
     "type": "object",
     "additionalProperties": false,
     "properties": {
-      "ippocNodeUrl": { "type": "string" },
-      "ippocApiKey": { "type": "string" },
-      "orchestratorMode": { "type": "string", "enum": ["local", "http", "auto"] },
-      "orchestratorCli": { "type": "string" },
-      "pythonPath": { "type": "string" }
+      "ippocNodeUrl": {
+        "type": "string"
+      },
+      "ippocApiKey": {
+        "type": "string"
+      },
+      "orchestratorMode": {
+        "type": "string",
+        "enum": ["local", "http", "auto"]
+      },
+      "orchestratorCli": {
+        "type": "string"
+      },
+      "pythonPath": {
+        "type": "string"
+      }
     }
   },
   "uiHints": {

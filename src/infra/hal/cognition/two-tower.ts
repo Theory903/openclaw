@@ -1,4 +1,4 @@
-import { getIPPOCAdapter } from "../../../../../../brain/cortex/openclaw-cortex/src/ippoc-adapter.js"; // Keeping .js as NodeNext usually requires it, but verified path.
+import { getIPPOCAdapter } from "openclaw-cortex/src/ippoc-adapter.js"; // Keeping .js as NodeNext usually requires it, but verified path.
 
 interface ActionCandidate {
   action: string;

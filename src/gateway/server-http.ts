@@ -316,6 +316,7 @@ export function createGatewayHttpServer(opts: {
 
     try {
       const configSnapshot = loadConfig();
+      const url = new URL(req.url ?? "/", `http://${req.headers.host || "localhost"}`);
       const trustedProxies = configSnapshot.gateway?.trustedProxies ?? [];
       if (await handleHooksRequest(req, res)) {
         return;
@@ -376,6 +377,7 @@ export function createGatewayHttpServer(opts: {
           return;
         }
       }
+
       if (controlUiEnabled) {
         if (
           handleControlUiAvatarRequest(req, res, {

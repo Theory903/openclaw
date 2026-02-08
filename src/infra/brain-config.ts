@@ -264,6 +264,58 @@ export class BrainToolClient {
     return costMap[`${toolName}.${action}`] || 0.1;
   }
 
+  async executeIppocToolBatch(
+    calls: Array<{
+      toolName: string;
+      domain: string;
+      action: string;
+      context: any;
+      riskLevel?: "low" | "medium" | "high";
+    }>,
+  ): Promise<Array<{ success: boolean; output: any; error?: string }>> {
+    const startTime = Date.now();
+    try {
+      if (this.config.budgetCheckEnabled) {
+        // Simple pre-check
+        const estimatedTotal = calls.reduce(
+          (sum, c) => sum + this.estimateCost(c.toolName, c.action),
+          0,
+        );
+        if (estimatedTotal > this.config.maxCostPerRequest * 5) {
+          throw new Error(`Batch cost estimate ${estimatedTotal} exceeds safety limit`);
+        }
+      }
+
+      const response = await fetch(`${this.config.brainUrl}/v1/orchestrator/execute:batch`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.config.apiKey}`,
+          "X-Source": "brain-infrastructure",
+        },
+        body: JSON.stringify({
+          requests: calls.map((c) => ({
+            tool_name: c.toolName,
+            domain: c.domain,
+            action: c.action,
+            context: c.context,
+            risk_level: c.riskLevel ?? "medium",
+          })),
+        }),
+        signal: AbortSignal.timeout(this.config.timeoutMs * 2), // Double timeout for batches
+      });
+
+      if (!response.ok) {
+        throw new Error(`Brain batch execution failed with status ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("[Brain Client] Batch execution failed:", error);
+      throw error;
+    }
+  }
+
   private createFallbackResponse(toolName: string, domain: string, action: string): any {
     console.warn(`[Brain Client] Using fallback for ${toolName}.${action}`);
 

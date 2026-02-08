@@ -148,7 +148,7 @@ function stampConfigVersion(cfg: OpenClawConfig): OpenClawConfig {
 
 function warnIfConfigFromFuture(cfg: OpenClawConfig, logger: Pick<typeof console, "warn">): void {
   const touched = cfg.meta?.lastTouchedVersion;
-  if (!touched) {
+  if (!touched || VERSION === "0.0.0") {
     return;
   }
   const cmp = compareOpenClawVersions(VERSION, touched);

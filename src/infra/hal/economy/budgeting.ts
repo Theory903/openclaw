@@ -1,4 +1,4 @@
-import { getIPPOCAdapter } from "../../../../../../brain/cortex/openclaw-cortex/src/ippoc-adapter.js";
+import { getIPPOCAdapter } from "openclaw-cortex/src/ippoc-adapter.js";
 
 type BudgetBucket = "survival" | "earning" | "learning" | "reserve" | "growth";
 

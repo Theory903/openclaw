@@ -1,6 +1,6 @@
 import { writeFile, readFile } from "fs/promises";
+import { getIPPOCAdapter } from "openclaw-cortex/src/ippoc-adapter.js";
 import { join, resolve } from "path";
-import { getIPPOCAdapter } from "../../../../../../brain/cortex/openclaw-cortex/src/ippoc-adapter.js";
 
 export interface Goal {
   description: string;

@@ -216,6 +216,7 @@ const ippocPlugin = {
 
     // 5. Register Brain-Powered Hooks
     api.registerHook("before_agent_start", {
+      name: "ippoc-context-injection",
       handler: async (hookContext: any) => {
         // Brain-powered context injection with adaptive reasoning
         try {
@@ -243,6 +244,7 @@ ${brainContext}
     });
 
     api.registerHook("agent_end", {
+      name: "ippoc-post-analysis",
       handler: async (hookContext: any) => {
         // Brain-powered post-run analysis and learning
         try {
@@ -283,6 +285,10 @@ async function syncIppocCron(api: OpenClawPluginApi) {
     const capabilities = await resp.json();
 
     // 2. List Existing Jobs
+    if (!api.cron) {
+      console.warn("[IPPOC] Cron capability not available in this OpenClaw environment");
+      return;
+    }
     const existing = await api.cron.list({ includeDisabled: true });
     const existingIds = new Set(existing.jobs.map((j: any) => j.id));
 
