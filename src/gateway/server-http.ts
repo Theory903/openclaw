@@ -325,8 +325,6 @@ export function createGatewayHttpServer(opts: {
         console.log(`[HTTP Server] Request handled by handleHooksRequest`);
         return;
       }
-<<<<<<< HEAD
-=======
       // @cognitive - IPPOC Body Intent-Bridge
       const { handleBodyIntentHttpRequest } = await import("../infra/intent-bridge.js");
       console.log(`[HTTP Server] Calling handleBodyIntentHttpRequest`);
@@ -334,7 +332,7 @@ export function createGatewayHttpServer(opts: {
         console.log(`[HTTP Server] Request handled by handleBodyIntentHttpRequest`);
         return;
       }
->>>>>>> 998795711 (feat: improve CLI wizard with linear flow and auth auto-detection)
+
       if (
         await handleToolsInvokeHttpRequest(req, res, {
           auth: resolvedAuth,

@@ -66,6 +66,9 @@ importers:
       '@napi-rs/canvas':
         specifier: ^0.1.89
         version: 0.1.90
+      '@noble/ed25519':
+        specifier: ^2.1.0
+        version: 2.3.0
       '@sinclair/typebox':
         specifier: 0.34.48
         version: 0.34.48
@@ -81,6 +84,9 @@ importers:
       ajv:
         specifier: ^8.17.1
         version: 8.17.1
+      axios:
+        specifier: ^1.13.5
+        version: 1.13.5(debug@4.4.3)
       chalk:
         specifier: ^5.6.2
         version: 5.6.2
@@ -138,6 +144,9 @@ importers:
       node-llama-cpp:
         specifier: 3.15.1
         version: 3.15.1(typescript@5.9.3)
+      openclaw-cortex:
+        specifier: file:../../cortex/cortex/openclaw-cortex
+        version: file:../../cortex/cortex/openclaw-cortex(@napi-rs/canvas@0.1.90)(@types/express@5.0.6)(audio-decode@2.2.3)(node-llama-cpp@3.15.1(typescript@5.9.3))(signal-polyfill@0.2.2)
       osc-progress:
         specifier: ^0.3.0
         version: 0.3.0
@@ -343,6 +352,12 @@ importers:
 
   extensions/imessage:
     devDependencies:
+      openclaw:
+        specifier: workspace:*
+        version: link:../..
+
+  extensions/ippoc-integration:
+    dependencies:
       openclaw:
         specifier: workspace:*
         version: link:../..
@@ -1578,6 +1593,9 @@ packages:
   '@noble/curves@2.0.1':
     resolution: {integrity: sha512-vs1Az2OOTBiP4q0pwjW5aF0xp9n4MxVrmkFBxc6EKZc6ddYx5gaZiAsZoq0uRRXWbi3AT/sBqn05eRPtn1JCPw==}
     engines: {node: '>= 20.19.0'}
+
+  '@noble/ed25519@2.3.0':
+    resolution: {integrity: sha512-M7dvXL2B92/M7dw9+gzuydL8qn/jiqNHaoR3Q+cb1q1GHV7uwE17WCyFMG+Y+TZb5izcaXk5TdJRrDUxHXL78A==}
 
   '@noble/ed25519@3.0.0':
     resolution: {integrity: sha512-QyteqMNm0GLqfa5SoYbSC3+Pvykwpn95Zgth4MFVSMKBB75ELl9tX1LAVsN4c3HXOrakHsF2gL4zWDAYCcsnzg==}
@@ -3132,6 +3150,9 @@ packages:
     resolution: {integrity: sha512-+ys997U96po4Kx/ABpBCqhA9EuxJaQWDQg7295H4hBphv3IZg0boBKuwYpt4YXp6MZ5AmZQnU/tyMTlRpaSejg==}
     engines: {node: '>= 0.4'}
 
+  capnp-ts@0.7.0:
+    resolution: {integrity: sha512-XKxXAC3HVPv7r674zP0VC3RTXz+/JKhfyw94ljvF80yynK6VkTnqE3jMuN8b3dUVmmc43TjyxjW4KTsmB3c86g==}
+
   caseless@0.12.0:
     resolution: {integrity: sha512-4tYFyifaFfGacoiObjJegolkwSU4xQNGbVgUiNYVUxbQ2x2lUsFvY4hVgVzGiIe6WLOPqycWXA40l+PWsxthUw==}
 
@@ -4473,6 +4494,17 @@ packages:
         optional: true
       zod:
         optional: true
+
+  openclaw-cortex@file:../../cortex/cortex/openclaw-cortex:
+    resolution: {directory: ../../cortex/cortex/openclaw-cortex, type: directory}
+
+  'openclaw@file:':
+    resolution: {directory: '', type: directory}
+    engines: {node: '>=22.12.0'}
+    hasBin: true
+    peerDependencies:
+      '@napi-rs/canvas': ^0.1.89
+      node-llama-cpp: 3.15.1
 
   opus-decoder@0.7.11:
     resolution: {integrity: sha512-+e+Jz3vGQLxRTBHs8YJQPRPc1Tr+/aC6coV/DlZylriA29BdHQAYXhvNRKtjftof17OFng0+P4wsFIqQu3a48A==}
@@ -6811,6 +6843,8 @@ snapshots:
     dependencies:
       '@noble/hashes': 2.0.1
 
+  '@noble/ed25519@2.3.0': {}
+
   '@noble/ed25519@3.0.0': {}
 
   '@noble/hashes@2.0.1': {}
@@ -8566,6 +8600,13 @@ snapshots:
       call-bind-apply-helpers: 1.0.2
       get-intrinsic: 1.3.0
 
+  capnp-ts@0.7.0:
+    dependencies:
+      debug: 4.4.3
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - supports-color
+
   caseless@0.12.0: {}
 
   chai@6.2.2: {}
@@ -9976,6 +10017,113 @@ snapshots:
     optionalDependencies:
       ws: 8.19.0
       zod: 4.3.6
+
+  openclaw-cortex@file:../../cortex/cortex/openclaw-cortex(@napi-rs/canvas@0.1.90)(@types/express@5.0.6)(audio-decode@2.2.3)(node-llama-cpp@3.15.1(typescript@5.9.3))(signal-polyfill@0.2.2):
+    dependencies:
+      axios: 1.13.5(debug@4.4.3)
+      capnp-ts: 0.7.0
+      fs-extra: 11.3.3
+      openclaw: file:(@napi-rs/canvas@0.1.90)(@types/express@5.0.6)(audio-decode@2.2.3)(node-llama-cpp@3.15.1(typescript@5.9.3))(signal-polyfill@0.2.2)
+      simple-git: 3.30.0
+      zod: 3.25.76
+    transitivePeerDependencies:
+      - '@discordjs/opus'
+      - '@modelcontextprotocol/sdk'
+      - '@napi-rs/canvas'
+      - '@types/express'
+      - audio-decode
+      - aws-crt
+      - bufferutil
+      - canvas
+      - debug
+      - encoding
+      - ffmpeg-static
+      - jimp
+      - link-preview-js
+      - node-llama-cpp
+      - node-opus
+      - opusscript
+      - signal-polyfill
+      - supports-color
+      - utf-8-validate
+
+  openclaw@file:(@napi-rs/canvas@0.1.90)(@types/express@5.0.6)(audio-decode@2.2.3)(node-llama-cpp@3.15.1(typescript@5.9.3))(signal-polyfill@0.2.2):
+    dependencies:
+      '@agentclientprotocol/sdk': 0.14.1(zod@4.3.6)
+      '@aws-sdk/client-bedrock': 3.985.0
+      '@buape/carbon': 0.14.0(hono@4.11.8)
+      '@clack/prompts': 1.0.0
+      '@grammyjs/runner': 2.0.3(grammy@1.39.3)
+      '@grammyjs/transformer-throttler': 1.2.1(grammy@1.39.3)
+      '@homebridge/ciao': 1.3.5
+      '@larksuiteoapi/node-sdk': 1.58.0
+      '@line/bot-sdk': 10.6.0
+      '@lydell/node-pty': 1.2.0-beta.3
+      '@mariozechner/pi-agent-core': 0.52.9(ws@8.19.0)(zod@4.3.6)
+      '@mariozechner/pi-ai': 0.52.9(ws@8.19.0)(zod@4.3.6)
+      '@mariozechner/pi-coding-agent': 0.52.9(ws@8.19.0)(zod@4.3.6)
+      '@mariozechner/pi-tui': 0.52.9
+      '@mozilla/readability': 0.6.0
+      '@napi-rs/canvas': 0.1.90
+      '@noble/ed25519': 2.3.0
+      '@sinclair/typebox': 0.34.48
+      '@slack/bolt': 4.6.0(@types/express@5.0.6)
+      '@slack/web-api': 7.13.0
+      '@whiskeysockets/baileys': 7.0.0-rc.9(audio-decode@2.2.3)(sharp@0.34.5)
+      ajv: 8.17.1
+      axios: 1.13.5(debug@4.4.3)
+      chalk: 5.6.2
+      chokidar: 5.0.0
+      cli-highlight: 2.1.11
+      commander: 14.0.3
+      croner: 10.0.1
+      discord-api-types: 0.38.38
+      dotenv: 17.2.4
+      express: 5.2.1
+      file-type: 21.3.0
+      grammy: 1.39.3
+      hono: 4.11.8
+      jiti: 2.6.1
+      json5: 2.2.3
+      jszip: 3.10.1
+      linkedom: 0.18.12
+      long: 5.3.2
+      markdown-it: 14.1.0
+      node-edge-tts: 1.2.10
+      node-llama-cpp: 3.15.1(typescript@5.9.3)
+      openclaw-cortex: file:../../cortex/cortex/openclaw-cortex(@napi-rs/canvas@0.1.90)(@types/express@5.0.6)(audio-decode@2.2.3)(node-llama-cpp@3.15.1(typescript@5.9.3))(signal-polyfill@0.2.2)
+      osc-progress: 0.3.0
+      pdfjs-dist: 5.4.624
+      playwright-core: 1.58.2
+      proper-lockfile: 4.1.2
+      qrcode-terminal: 0.12.0
+      sharp: 0.34.5
+      signal-utils: 0.21.1(signal-polyfill@0.2.2)
+      sqlite-vec: 0.1.7-alpha.2
+      tar: 7.5.7
+      tslog: 4.10.2
+      undici: 7.21.0
+      ws: 8.19.0
+      yaml: 2.8.2
+      zod: 4.3.6
+    transitivePeerDependencies:
+      - '@discordjs/opus'
+      - '@modelcontextprotocol/sdk'
+      - '@types/express'
+      - audio-decode
+      - aws-crt
+      - bufferutil
+      - canvas
+      - debug
+      - encoding
+      - ffmpeg-static
+      - jimp
+      - link-preview-js
+      - node-opus
+      - opusscript
+      - signal-polyfill
+      - supports-color
+      - utf-8-validate
 
   opus-decoder@0.7.11:
     dependencies:

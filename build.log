@@ -1,0 +1,71 @@
+
+> openclaw@2026.2.6-3 build
+> pnpm canvas:a2ui:bundle && tsdown && pnpm build:plugin-sdk:dts && node --import tsx scripts/write-plugin-sdk-entry-dts.ts && node --import tsx scripts/canvas-a2ui-copy.ts && node --import tsx scripts/copy-hook-metadata.ts && node --import tsx scripts/write-build-info.ts && node --import tsx scripts/write-cli-compat.ts
+
+
+> openclaw@2026.2.6-3 canvas:a2ui:bundle /Users/abhishekjha/CODE/ippoc/src/kernel/openclaw
+> bash scripts/bundle-a2ui.sh
+
+<DIR>/a2ui.bundle.js  chunk │ size: 536.92 kB
+
+✔ rolldown v1.0.0-rc.3 Finished in 37.89 ms
+[34mℹ[39m tsdown [2mv0.20.3[22m powered by rolldown [2mv1.0.0-rc.3[22m
+[34mℹ[39m config file: [4m/Users/abhishekjha/CODE/ippoc/src/kernel/openclaw/tsdown.config.ts[24m 
+[34mℹ[39m entry: [34msrc/index.ts[39m
+[34mℹ[39m target: [34mnode22.12.0[39m
+[34mℹ[39m tsconfig: [34mtsconfig.json[39m
+[34mℹ[39m entry: [34msrc/entry.ts[39m
+[34mℹ[39m target: [34mnode22.12.0[39m
+[34mℹ[39m tsconfig: [34mtsconfig.json[39m
+[34mℹ[39m entry: [34msrc/infra/warning-filter.ts[39m
+[34mℹ[39m target: [34mnode22.12.0[39m
+[34mℹ[39m tsconfig: [34mtsconfig.json[39m
+[34mℹ[39m entry: [34msrc/plugin-sdk/index.ts[39m
+[34mℹ[39m target: [34mnode22.12.0[39m
+[34mℹ[39m tsconfig: [34mtsconfig.json[39m
+[34mℹ[39m entry: [34msrc/extensionAPI.ts[39m
+[34mℹ[39m target: [34mnode22.12.0[39m
+[34mℹ[39m tsconfig: [34mtsconfig.json[39m
+[34mℹ[39m entry: [34msrc/hooks/llm-slug-generator.ts, src/hooks/bundled/boot-md/handler.ts, src/hooks/bundled/session-memory/handler.ts, src/hooks/bundled/command-logger/handler.ts, src/hooks/bundled/soul-evil/handler.ts[39m
+[34mℹ[39m target: [34mnode22.12.0[39m
+[34mℹ[39m tsconfig: [34mtsconfig.json[39m
+[34mℹ[39m Build start
+[34mℹ[39m Cleaning 1 files
+[34mℹ[39m [2mdist/[22m[1mwarning-filter.js[22m  [2m1.74 kB[22m [2m│ gzip: 0.64 kB[22m
+[34mℹ[39m 1 files, total: 1.74 kB
+[32m✔[39m Build complete in [32m54ms[39m
+
+[41m ERROR [49m Error: Build failed with 1 error:
+
+[31m[PARSE_ERROR] Error:[0m Encountered diff marker
+     [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/gateway/server-http.ts:328:1 [38;5;246m][0m
+     [38;5;246m│[0m
+ [38;5;246m328 │[0m <<<<<<<[38;5;249m [0m[38;5;249mH[0m[38;5;249mE[0m[38;5;249mA[0m[38;5;249mD[0m
+ [38;5;240m    │[0m ───┬───  
+ [38;5;240m    │[0m    ╰───── between this marker and `=======` is the code that we're merging into
+ [38;5;246m329 │[0m =======
+ [38;5;240m    │[0m ───┬───  
+ [38;5;240m    │[0m    ╰───── between this marker and `>>>>>>>` is the incoming code
+ [38;5;240m    │[0m 
+ [38;5;246m337 │[0m >>>>>>>[38;5;249m [0m[38;5;249m9[0m[38;5;249m9[0m[38;5;249m8[0m[38;5;249m7[0m[38;5;249m9[0m[38;5;249m5[0m[38;5;249m7[0m[38;5;249m1[0m[38;5;249m1[0m[38;5;249m [0m[38;5;249m([0m[38;5;249mf[0m[38;5;249me[0m[38;5;249ma[0m[38;5;249mt[0m[38;5;249m:[0m[38;5;249m [0m[38;5;249mi[0m[38;5;249mm[0m[38;5;249mp[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mv[0m[38;5;249me[0m[38;5;249m [0m[38;5;249mC[0m[38;5;249mL[0m[38;5;249mI[0m[38;5;249m [0m[38;5;249mw[0m[38;5;249mi[0m[38;5;249mz[0m[38;5;249ma[0m[38;5;249mr[0m[38;5;249md[0m[38;5;249m [0m[38;5;249mw[0m[38;5;249mi[0m[38;5;249mt[0m[38;5;249mh[0m[38;5;249m [0m[38;5;249ml[0m[38;5;249mi[0m[38;5;249mn[0m[38;5;249me[0m[38;5;249ma[0m[38;5;249mr[0m[38;5;249m [0m[38;5;249mf[0m[38;5;249ml[0m[38;5;249mo[0m[38;5;249mw[0m[38;5;249m [0m[38;5;249ma[0m[38;5;249mn[0m[38;5;249md[0m[38;5;249m [0m[38;5;249ma[0m[38;5;249mu[0m[38;5;249mt[0m[38;5;249mh[0m[38;5;249m [0m[38;5;249ma[0m[38;5;249mu[0m[38;5;249mt[0m[38;5;249mo[0m[38;5;249m-[0m[38;5;249md[0m[38;5;249me[0m[38;5;249mt[0m[38;5;249me[0m[38;5;249mc[0m[38;5;249mt[0m[38;5;249mi[0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249m)[0m
+ [38;5;240m    │[0m ───┬───  
+ [38;5;240m    │[0m    ╰───── this marker concludes the conflict region
+ [38;5;240m    │[0m 
+ [38;5;240m    │[0m [38;5;115mHelp[0m: Conflict markers indicate that a merge was started but could not be completed due to merge conflicts.
+ [38;5;240m    │[0m       To resolve a conflict, keep only the code you want and then delete the lines containing conflict markers.
+ [38;5;240m    │[0m       If you're having merge conflicts after pulling new code, the top section is the code you already had and the bottom section is the remote code.
+ [38;5;240m    │[0m       If you're in the middle of a rebase, the top section is the code being rebased onto and the bottom section is the code coming from the current commit being rebased.
+ [38;5;240m    │[0m       If you have nested conflicts, resolve the outermost conflict first.
+[38;5;246m─────╯[0m
+
+    at aggregateBindingErrorsIntoJsError (file:///Users/abhishekjha/CODE/ippoc/src/kernel/openclaw/node_modules/.pnpm/rolldown@1.0.0-rc.3/node_modules/rolldown/dist/shared/bindingify-input-options-CorDub0q.mjs:628:18)
+    at unwrapBindingResult (file:///Users/abhishekjha/CODE/ippoc/src/kernel/openclaw/node_modules/.pnpm/rolldown@1.0.0-rc.3/node_modules/rolldown/dist/shared/bindingify-input-options-CorDub0q.mjs:598:128)
+    at #build (file:///Users/abhishekjha/CODE/ippoc/src/kernel/openclaw/node_modules/.pnpm/rolldown@1.0.0-rc.3/node_modules/rolldown/dist/shared/rolldown-build-CGNuOAoF.mjs:3345:34)
+    at async build (file:///Users/abhishekjha/CODE/ippoc/src/kernel/openclaw/node_modules/.pnpm/rolldown@1.0.0-rc.3/node_modules/rolldown/dist/index.mjs:47:22)
+    at async Promise.all (index 0)
+    at async buildSingle (file:///Users/abhishekjha/CODE/ippoc/src/kernel/openclaw/node_modules/.pnpm/tsdown@0.20.3_@typescript+native-preview@7.0.0-dev.20260208.1_typescript@5.9.3/node_modules/tsdown/dist/build-C5RQkVSf.mjs:852:19)
+    at async Promise.all (index 1)
+    at async buildWithConfigs (file:///Users/abhishekjha/CODE/ippoc/src/kernel/openclaw/node_modules/.pnpm/tsdown@0.20.3_@typescript+native-preview@7.0.0-dev.20260208.1_typescript@5.9.3/node_modules/tsdown/dist/build-C5RQkVSf.mjs:813:18)
+    at async CAC.<anonymous> (file:///Users/abhishekjha/CODE/ippoc/src/kernel/openclaw/node_modules/.pnpm/tsdown@0.20.3_@typescript+native-preview@7.0.0-dev.20260208.1_typescript@5.9.3/node_modules/tsdown/dist/run.mjs:23:2)
+    at async runCLI (file:///Users/abhishekjha/CODE/ippoc/src/kernel/openclaw/node_modules/.pnpm/tsdown@0.20.3_@typescript+native-preview@7.0.0-dev.20260208.1_typescript@5.9.3/node_modules/tsdown/dist/run.mjs:47:3)
+
