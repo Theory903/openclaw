@@ -400,6 +400,92 @@ export async function runConfigureWizard(
           );
         }
       }
+    } else if (!snapshot.exists) {
+      // Fresh install: Run linear setup flow
+      const workspaceInput = guardCancel(
+        await text({
+          message: "Workspace directory",
+          initialValue: workspaceDir,
+        }),
+        runtime,
+      );
+      workspaceDir = resolveUserPath(String(workspaceInput ?? "").trim() || DEFAULT_WORKSPACE);
+      nextConfig = {
+        ...nextConfig,
+        agents: {
+          ...nextConfig.agents,
+          defaults: {
+            ...nextConfig.agents?.defaults,
+            workspace: workspaceDir,
+          },
+        },
+      };
+      await ensureWorkspaceAndSessions(workspaceDir, runtime);
+      await persistConfig();
+
+      nextConfig = await promptAuthConfig(nextConfig, runtime, prompter);
+      await persistConfig();
+
+      nextConfig = await promptWebToolsConfig(nextConfig, runtime);
+      await persistConfig();
+
+      const gateway = await promptGatewayConfig(nextConfig, runtime);
+      nextConfig = gateway.config;
+      gatewayPort = gateway.port;
+      gatewayToken = gateway.token;
+      await persistConfig();
+
+      await noteChannelStatus({ cfg: nextConfig, prompter });
+      // Default to configure for fresh install
+      nextConfig = await setupChannels(nextConfig, runtime, prompter, {
+        allowDisable: true,
+        allowSignalInstall: true,
+        skipConfirm: true,
+        skipStatusNote: true,
+      });
+      await persistConfig();
+
+      const wsDir = resolveUserPath(workspaceDir);
+      nextConfig = await setupSkills(nextConfig, wsDir, runtime, prompter);
+      await persistConfig();
+
+      await maybeInstallDaemon({
+        runtime,
+        port: gatewayPort,
+        gatewayToken,
+      });
+
+      // Run health check at the end
+      const localLinks = resolveControlUiLinks({
+        bind: nextConfig.gateway?.bind ?? "loopback",
+        port: gatewayPort,
+        customBindHost: nextConfig.gateway?.customBindHost,
+        basePath: undefined,
+      });
+      const remoteUrl = nextConfig.gateway?.remote?.url?.trim();
+      const wsUrl =
+        nextConfig.gateway?.mode === "remote" && remoteUrl ? remoteUrl : localLinks.wsUrl;
+      const token = nextConfig.gateway?.auth?.token ?? process.env.OPENCLAW_GATEWAY_TOKEN;
+      const password = nextConfig.gateway?.auth?.password ?? process.env.OPENCLAW_GATEWAY_PASSWORD;
+      await waitForGatewayReachable({
+        url: wsUrl,
+        token,
+        password,
+        deadlineMs: 15_000,
+      });
+      try {
+        await healthCommand({ json: false, timeoutMs: 10_000 }, runtime);
+      } catch (err) {
+        runtime.error(formatHealthCheckFailure(err));
+        note(
+          [
+            "Docs:",
+            "https://docs.openclaw.ai/gateway/health",
+            "https://docs.openclaw.ai/gateway/troubleshooting",
+          ].join("\n"),
+          "Health check help",
+        );
+      }
     } else {
       let ranSection = false;
       let didConfigureGateway = false;

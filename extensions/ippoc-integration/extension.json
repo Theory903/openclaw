@@ -14,7 +14,7 @@
   "configuration": {
     "ippocNodeUrl": {
       "type": "string",
-      "default": "http://localhost:8001",
+      "default": "http://localhost:8003",
       "description": "URL of the IPPOC Brain Node"
     },
     "ippocApiKey": {

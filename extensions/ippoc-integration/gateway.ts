@@ -60,7 +60,7 @@ function resolveRepoRoot(workspaceDir?: string): string {
   const start = workspaceDir || process.env.IPPOC_REPO_ROOT || process.cwd();
   let current = path.resolve(start);
   for (let i = 0; i < 6; i += 1) {
-    if (fs.existsSync(path.join(current, "brain", "core", "orchestrator.py"))) {
+    if (fs.existsSync(path.join(current, "src", "cortex", "core", "orchestrator.py"))) {
       return current;
     }
     const parent = path.dirname(current);
@@ -79,7 +79,7 @@ async function executeIppocToolLocal(
   const cliPath =
     opts.orchestratorCli ||
     process.env.IPPOC_ORCH_CLI ||
-    path.join(repoRoot, "brain", "core", "orchestrator_cli.py");
+    path.join(repoRoot, "src", "cortex", "core", "orchestrator_cli.py");
 
   if (!fs.existsSync(cliPath)) {
     throw new Error(`IPPOC orchestrator CLI not found: ${cliPath}`);
@@ -113,7 +113,7 @@ async function executeIppocToolLocal(
 
 export async function executeIppocTool(
   envelope: ToolEnvelope,
-  baseUrl: string = process.env.IPPOC_BRAIN_URL || "http://localhost:8001",
+  baseUrl: string = process.env.IPPOC_BRAIN_URL || "http://localhost:8003",
   apiKey: string = "",
   options: ExecuteOptions = {},
 ): Promise<ToolResult> {

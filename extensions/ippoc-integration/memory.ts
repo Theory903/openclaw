@@ -28,7 +28,7 @@ export function registerMemoryTools(api: OpenClawPluginApi) {
         // Use Brain for retrieval (no local embedding needed)
         const apiKey = pluginConfig.ippocApiKey || process.env.IPPOC_API_KEY || "";
         const baseUrl =
-          pluginConfig.ippocNodeUrl || process.env.IPPOC_BRAIN_URL || "http://localhost:8001";
+          pluginConfig.ippocNodeUrl || process.env.IPPOC_BRAIN_URL || "http://localhost:8003";
 
         try {
           const envelope: ToolEnvelope = {
@@ -74,7 +74,7 @@ export function registerMemoryTools(api: OpenClawPluginApi) {
         const { agentId } = context;
         const apiKey = pluginConfig.ippocApiKey || process.env.IPPOC_API_KEY || "";
         const baseUrl =
-          pluginConfig.ippocNodeUrl || process.env.IPPOC_BRAIN_URL || "http://localhost:8001";
+          pluginConfig.ippocNodeUrl || process.env.IPPOC_BRAIN_URL || "http://localhost:8003";
 
         try {
           const envelope: ToolEnvelope = {

@@ -40,10 +40,31 @@ export async function handleBodyIntentHttpRequest(
     return false;
   }
 
+  console.log(`[IntentBridge] Received ${req.method} request to ${url.pathname}`);
+  console.log(`[IntentBridge] Headers: ${JSON.stringify(req.headers)}`);
+
   if (req.method !== "POST") {
+    console.log(`[IntentBridge] Rejecting non-POST request: ${req.method}`);
     sendJson(res, 405, { error: "Method Not Allowed" });
     return true;
   }
+
+  // Token validation
+  const authHeader = req.headers.authorization;
+  const expectedToken = process.env.OPENCLAW_GATEWAY_TOKEN || "ippoc-dev-token";
+  console.log(`[IntentBridge] Expected token: ${expectedToken}, Received auth: ${authHeader}`);
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    sendJson(res, 401, { error: "Missing or invalid Authorization header" });
+    return true;
+  }
+  const token = authHeader.replace("Bearer ", "");
+  if (token !== expectedToken) {
+    sendJson(res, 401, { error: "Invalid token" });
+    return true;
+  }
+
+  console.log(`[IntentBridge] Token validated successfully`);
 
   const body = await readJsonBody(req, 10 * 1024 * 1024); // 10MB limit
   if (!body.ok) {

@@ -2,6 +2,7 @@ import type { OpenClawConfig, GatewayAuthConfig } from "../config/config.js";
 import type { RuntimeEnv } from "../runtime.js";
 import type { WizardPrompter } from "../wizard/prompts.js";
 import { ensureAuthProfileStore } from "../agents/auth-profiles.js";
+import { note } from "../terminal/note.js";
 import { promptAuthChoiceGrouped } from "./auth-choice-prompt.js";
 import { applyAuthChoice, resolvePreferredProviderForAuthChoice } from "./auth-choice.js";
 import {
@@ -44,18 +45,43 @@ export async function promptAuthConfig(
   runtime: RuntimeEnv,
   prompter: WizardPrompter,
 ): Promise<OpenClawConfig> {
-  const authChoice = await promptAuthChoiceGrouped({
-    prompter,
-    store: ensureAuthProfileStore(undefined, {
-      allowKeychainPrompt: false,
-    }),
-    includeSkip: true,
-  });
+  // Check for existing keys to bypass prompt ("share keys" logic)
+  let initialAuthChoice: string | undefined;
+
+  /* eslint-disable no-process-env */
+  if (process.env.ANTHROPIC_API_KEY) {
+    initialAuthChoice = "apiKey";
+  } else if (process.env.OPENAI_API_KEY) {
+    initialAuthChoice = "openai-api-key";
+  } else if (process.env.OPENROUTER_API_KEY) {
+    initialAuthChoice = "openrouter-api-key";
+  } else if (process.env.GEMINI_API_KEY) {
+    initialAuthChoice = "gemini-api-key";
+  }
+  /* eslint-enable no-process-env */
+
+  let authChoice: string;
+  if (initialAuthChoice) {
+    // Auto-select provider if key is present
+    authChoice = initialAuthChoice;
+    note(
+      `Detected existing API key for ${authChoice}. Using it directly.`,
+      "Auth Auto-Configuration",
+    );
+  } else {
+    authChoice = await promptAuthChoiceGrouped({
+      prompter,
+      store: ensureAuthProfileStore(undefined, {
+        allowKeychainPrompt: false,
+      }),
+      includeSkip: true,
+    });
+  }
 
   let next = cfg;
   if (authChoice !== "skip") {
     const applied = await applyAuthChoice({
-      authChoice,
+      authChoice: authChoice as any,
       config: next,
       prompter,
       runtime,
@@ -68,7 +94,7 @@ export async function promptAuthConfig(
       prompter,
       allowKeep: true,
       ignoreAllowlist: true,
-      preferredProvider: resolvePreferredProviderForAuthChoice(authChoice),
+      preferredProvider: resolvePreferredProviderForAuthChoice(authChoice as any),
     });
     if (modelSelection.model) {
       next = applyPrimaryModel(next, modelSelection.model);

@@ -318,9 +318,23 @@ export function createGatewayHttpServer(opts: {
       const configSnapshot = loadConfig();
       const url = new URL(req.url ?? "/", `http://${req.headers.host || "localhost"}`);
       const trustedProxies = configSnapshot.gateway?.trustedProxies ?? [];
+
+      console.log(`[HTTP Server] Handling ${req.method} request to ${url.pathname}`);
+
       if (await handleHooksRequest(req, res)) {
+        console.log(`[HTTP Server] Request handled by handleHooksRequest`);
         return;
       }
+<<<<<<< HEAD
+=======
+      // @cognitive - IPPOC Body Intent-Bridge
+      const { handleBodyIntentHttpRequest } = await import("../infra/intent-bridge.js");
+      console.log(`[HTTP Server] Calling handleBodyIntentHttpRequest`);
+      if (await handleBodyIntentHttpRequest(req, res)) {
+        console.log(`[HTTP Server] Request handled by handleBodyIntentHttpRequest`);
+        return;
+      }
+>>>>>>> 998795711 (feat: improve CLI wizard with linear flow and auth auto-detection)
       if (
         await handleToolsInvokeHttpRequest(req, res, {
           auth: resolvedAuth,

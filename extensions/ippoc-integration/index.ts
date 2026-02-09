@@ -26,7 +26,7 @@ class BrainAdapter {
   private apiKey: string;
 
   constructor() {
-    this.baseUrl = process.env.IPPOC_BRAIN_URL || "http://localhost:8001";
+    this.baseUrl = process.env.IPPOC_BRAIN_URL || "http://localhost:8003";
     this.apiKey = process.env.IPPOC_API_KEY || "";
   }
 
@@ -215,9 +215,9 @@ const ippocPlugin = {
     registerGenericTool(api);
 
     // 5. Register Brain-Powered Hooks
-    api.registerHook("before_agent_start", {
-      name: "ippoc-context-injection",
-      handler: async (hookContext: any) => {
+    api.registerHook(
+      "before_agent_start",
+      async (hookContext: any) => {
         // Brain-powered context injection with adaptive reasoning
         try {
           // Use brain to analyze agent purpose and generate optimal context
@@ -241,11 +241,12 @@ ${brainContext}
           };
         }
       },
-    });
+      { name: "ippoc-context-injection" },
+    );
 
-    api.registerHook("agent_end", {
-      name: "ippoc-post-analysis",
-      handler: async (hookContext: any) => {
+    api.registerHook(
+      "agent_end",
+      async (hookContext: any) => {
         // Brain-powered post-run analysis and learning
         try {
           // Use brain for pattern recognition and adaptive learning
@@ -269,7 +270,8 @@ ${brainContext}
           console.warn("[IPPOC] Brain post-analysis failed:", error);
         }
       },
-    });
+      { name: "ippoc-post-analysis" },
+    );
   },
 };
 
