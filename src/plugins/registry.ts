@@ -2,6 +2,7 @@ import path from "node:path";
 import type { AnyAgentTool } from "../agents/tools/common.js";
 import type { ChannelDock } from "../channels/dock.js";
 import type { ChannelPlugin } from "../channels/plugins/types.js";
+import type { CronService } from "../cron/service.js";
 import type {
   GatewayRequestHandler,
   GatewayRequestHandlers,
@@ -141,6 +142,7 @@ export type PluginRegistryParams = {
   logger: PluginLogger;
   coreGatewayHandlers?: GatewayRequestHandlers;
   runtime: PluginRuntime;
+  cron?: CronService;
 };
 
 export function createPluginRegistry(registryParams: PluginRegistryParams) {
@@ -482,6 +484,7 @@ export function createPluginRegistry(registryParams: PluginRegistryParams) {
       pluginConfig: params.pluginConfig,
       runtime: registryParams.runtime,
       logger: normalizeLogger(registryParams.logger),
+      cron: registryParams.cron,
       registerTool: (tool, opts) => registerTool(record, tool, opts),
       registerHook: (events, handler, opts) =>
         registerHook(record, events, handler, opts, params.config),

@@ -1,4 +1,5 @@
 import type { loadConfig } from "../config/config.js";
+import type { CronService } from "../cron/service.js";
 import type { GatewayRequestHandler } from "./server-methods/types.js";
 import { loadOpenClawPlugins } from "../plugins/loader.js";
 
@@ -13,6 +14,7 @@ export function loadGatewayPlugins(params: {
   };
   coreGatewayHandlers: Record<string, GatewayRequestHandler>;
   baseMethods: string[];
+  cron?: CronService;
 }) {
   const pluginRegistry = loadOpenClawPlugins({
     config: params.cfg,
@@ -24,6 +26,7 @@ export function loadGatewayPlugins(params: {
       debug: (msg) => params.log.debug(msg),
     },
     coreGatewayHandlers: params.coreGatewayHandlers,
+    cron: params.cron,
   });
   const pluginMethods = Object.keys(pluginRegistry.gatewayHandlers);
   const gatewayMethods = Array.from(new Set([...params.baseMethods, ...pluginMethods]));

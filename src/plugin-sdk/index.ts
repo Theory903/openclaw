@@ -221,6 +221,7 @@ export { addWildcardAllowFrom, promptAccountId } from "../channels/plugins/onboa
 export { promptChannelAccessConfig } from "../channels/plugins/onboarding/channel-access.js";
 
 export {
+  AnyAgentTool,
   createActionGate,
   jsonResult,
   readNumberParam,

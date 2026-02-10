@@ -227,12 +227,28 @@ export async function startGatewayServer(
   const defaultAgentId = resolveDefaultAgentId(cfgAtStart);
   const defaultWorkspaceDir = resolveAgentWorkspaceDir(cfgAtStart, defaultAgentId);
   const baseMethods = listGatewayMethods();
+
+  const deps = createDefaultDeps();
+  let cronState = buildGatewayCronService({
+    cfg: cfgAtStart,
+    deps,
+    broadcast: (event, payload, opts) => {
+      // Broadcast will be attached later in the startup sequence,
+      // but the cron service needs the interface now.
+      if (typeof broadcast === "function") {
+        broadcast(event, payload, opts);
+      }
+    },
+  });
+  let { cron, storePath: cronStorePath } = cronState;
+
   const { pluginRegistry, gatewayMethods: baseGatewayMethods } = loadGatewayPlugins({
     cfg: cfgAtStart,
     workspaceDir: defaultWorkspaceDir,
     log,
     coreGatewayHandlers,
     baseMethods,
+    cron,
   });
   const channelLogs = Object.fromEntries(
     listChannelPlugins().map((plugin) => [plugin.id, logChannels.child(plugin.id)]),
@@ -304,7 +320,6 @@ export async function startGatewayServer(
   const wizardRunner = opts.wizardRunner ?? runOnboardingWizard;
   const { wizardSessions, findRunningWizard, purgeWizardSession } = createWizardSessionTracker();
 
-  const deps = createDefaultDeps();
   let canvasHostServer: CanvasHostServer | null = null;
   const gatewayTls = await loadGatewayTlsRuntime(cfgAtStart.gateway?.tls, log.child("tls"));
   if (cfgAtStart.gateway?.tls?.enabled && !gatewayTls.enabled) {
@@ -371,13 +386,6 @@ export async function startGatewayServer(
   };
   const hasMobileNodeConnected = () => hasConnectedMobileNode(nodeRegistry);
   applyGatewayLaneConcurrency(cfgAtStart);
-
-  let cronState = buildGatewayCronService({
-    cfg: cfgAtStart,
-    deps,
-    broadcast,
-  });
-  let { cron, storePath: cronStorePath } = cronState;
 
   const channelManager = createChannelManager({
     loadConfig,

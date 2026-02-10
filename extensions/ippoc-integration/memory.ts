@@ -24,7 +24,7 @@ export function registerMemoryTools(api: OpenClawPluginApi) {
       label: "IPPOC Memory Search",
       description: "Search IPPOC's distributed organism memory via the Brain.",
       parameters: MemorySearchSchema,
-      execute: async (_id, params: any) => {
+      execute: async (_id: string, params: any) => {
         // Use Brain for retrieval (no local embedding needed)
         const apiKey = pluginConfig.ippocApiKey || process.env.IPPOC_API_KEY || "";
         const baseUrl =
@@ -70,7 +70,7 @@ export function registerMemoryTools(api: OpenClawPluginApi) {
       label: "IPPOC Memory Write",
       description: "Store a new memory into IPPOC's HiDB via the Brain.",
       parameters: MemoryWriteSchema,
-      execute: async (_id, params: any) => {
+      execute: async (_id: string, params: any) => {
         const { agentId } = context;
         const apiKey = pluginConfig.ippocApiKey || process.env.IPPOC_API_KEY || "";
         const baseUrl =

@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { OpenClawConfig } from "../config/config.js";
+import type { CronService } from "../cron/service.js";
 import type { GatewayRequestHandler } from "../gateway/server-methods/types.js";
 import type {
   OpenClawPluginDefinition,
@@ -36,6 +37,7 @@ export type PluginLoadOptions = {
   coreGatewayHandlers?: Record<string, GatewayRequestHandler>;
   cache?: boolean;
   mode?: "full" | "validate";
+  cron?: CronService;
 };
 
 const registryCache = new Map<string, PluginRegistry>();
@@ -192,6 +194,7 @@ export function loadOpenClawPlugins(options: PluginLoadOptions = {}): PluginRegi
     logger,
     runtime,
     coreGatewayHandlers: options.coreGatewayHandlers as Record<string, GatewayRequestHandler>,
+    cron: options.cron,
   });
 
   const discovery = discoverOpenClawPlugins({

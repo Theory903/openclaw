@@ -145,10 +145,11 @@ const ippocPlugin = {
       name: "ippoc_cron",
       description: "Brain-powered cognitive orchestration command",
       acceptsArgs: true,
-      handler: async (ctx) => {
+      handler: async (ctx: any) => {
         const cronId = ctx.args?.trim();
-        if (!cronId)
-          return { content: [{ type: "text", text: "Error: No cognitive task ID provided" }] };
+        if (!cronId) {
+          return { text: "Error: No cognitive task ID provided" };
+        }
 
         console.log(`[IPPOC] 🧠 Triggering Brain-Powered Cognitive Loop: ${cronId}`);
 
@@ -177,6 +178,10 @@ const ippocPlugin = {
             },
           );
 
+          if (!resp.ok) {
+            throw new Error(`Execution failed with status ${resp.status}`);
+          }
+
           const result = await resp.json();
           console.log(`[IPPOC] ✅ Brain-optimized ${cronId} Complete:`, result);
 
@@ -188,18 +193,12 @@ const ippocPlugin = {
           });
 
           return {
-            content: [
-              { type: "text", text: `🧠 Brain-executed ${cronId}: ${result.status}` },
-              {
-                type: "text",
-                text: `Optimization insights: ${brainResponse.substring(0, 100)}...`,
-              },
-            ],
+            text: `🧠 Brain-executed ${cronId}: ${result.status}\nOptimization insights: ${brainResponse.substring(0, 100)}...`,
           };
         } catch (e: any) {
           console.error(`[IPPOC] ❌ Brain-enhanced ${cronId} Failed:`, e);
           return {
-            content: [{ type: "text", text: `🧠 Cognitive Orchestration Failed: ${e.message}` }],
+            text: `🧠 Cognitive Orchestration Failed: ${e.message}`,
           };
         }
       },
@@ -215,63 +214,53 @@ const ippocPlugin = {
     registerGenericTool(api);
 
     // 5. Register Brain-Powered Hooks
-    api.registerHook(
-      "before_agent_start",
-      async (hookContext: any) => {
-        // Brain-powered context injection with adaptive reasoning
-        try {
-          // Use brain to analyze agent purpose and generate optimal context
-          const brainContext = await brainAdapter.reasoning(`
+    api.on("before_agent_start", async (event: any, hookContext: any) => {
+      // Brain-powered context injection with adaptive reasoning
+      try {
+        // Use brain to analyze agent purpose and generate optimal context
+        const brainContext = await brainAdapter.reasoning(`
                     Generate optimal cognitive context for agent startup.
                     Hook context: ${JSON.stringify(hookContext)}
                     Provide adaptive initialization parameters.
                 `);
 
-          return {
-            prependContext: `
+        return {
+          prependContext: `
 [IPPOC_BRAIN_CONTEXT]
 ${brainContext}
 [/IPPOC_BRAIN_CONTEXT]
 `,
-          };
-        } catch (error) {
-          console.warn("[IPPOC] Brain context generation failed:", error);
-          return {
-            prependContext: "\n[IPPOC_FALLBACK]\nStandard initialization\n[/IPPOC_FALLBACK]\n",
-          };
-        }
-      },
-      { name: "ippoc-context-injection" },
-    );
+        };
+      } catch (error) {
+        console.warn("[IPPOC] Brain context generation failed:", error);
+        return {
+          prependContext: "\n[IPPOC_FALLBACK]\nStandard initialization\n[/IPPOC_FALLBACK]\n",
+        };
+      }
+    });
 
-    api.registerHook(
-      "agent_end",
-      async (hookContext: any) => {
-        // Brain-powered post-run analysis and learning
-        try {
-          // Use brain for pattern recognition and adaptive learning
-          await brainAdapter.patternRecognition({
-            executionTrace: hookContext.event,
-            performanceMetrics: hookContext.ctx?.metrics,
-            resourceUtilization: hookContext.ctx?.resources,
-          });
+    api.on("agent_end", async (event: any, hookContext: any) => {
+      // Brain-powered post-run analysis and learning
+      try {
+        // Use brain for pattern recognition and adaptive learning
+        await brainAdapter.patternRecognition({
+          executionTrace: event.messages, // In agent_end, event has messages
+          performanceMetrics: hookContext.workspaceDir, // just example
+        });
 
-          // Creative synthesis of improvement suggestions
-          const improvementInsights = await brainAdapter.creativeSynthesis([
-            { type: "performance", data: hookContext.ctx?.metrics },
-            { type: "resource", data: hookContext.ctx?.resources },
-            { type: "patterns", data: hookContext.event },
-          ]);
+        // Creative synthesis of improvement suggestions
+        const improvementInsights = await brainAdapter.creativeSynthesis([
+          { type: "performance", data: event.success },
+          { type: "trace", data: event.messages },
+        ]);
 
-          console.log(
-            `[IPPOC] 📝 Cognitive analysis complete: ${JSON.stringify(improvementInsights)}`,
-          );
-        } catch (error) {
-          console.warn("[IPPOC] Brain post-analysis failed:", error);
-        }
-      },
-      { name: "ippoc-post-analysis" },
-    );
+        console.log(
+          `[IPPOC] 📝 Cognitive analysis complete: ${JSON.stringify(improvementInsights)}`,
+        );
+      } catch (error) {
+        console.warn("[IPPOC] Brain post-analysis failed:", error);
+      }
+    });
   },
 };
 
@@ -292,7 +281,7 @@ async function syncIppocCron(api: OpenClawPluginApi) {
       return;
     }
     const existing = await api.cron.list({ includeDisabled: true });
-    const existingIds = new Set(existing.jobs.map((j: any) => j.id));
+    const existingIds = new Set(existing.map((j: any) => j.id));
 
     // 3. Register Missing
     for (const cap of capabilities) {
@@ -301,6 +290,7 @@ async function syncIppocCron(api: OpenClawPluginApi) {
         await api.cron.add({
           name: cap.name,
           description: `${cap.description} (Cost: ${cap.cost_estimate.ippc_per_run} IPPC)`,
+          enabled: true,
           schedule: { kind: "cron", expr: cap.schedule },
           // Use agentTurn to trigger the command
           payload: {
